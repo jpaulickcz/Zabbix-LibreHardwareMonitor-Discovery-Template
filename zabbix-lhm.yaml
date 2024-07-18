@@ -1,0 +1,44 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 57b7ae836ca64446ba2c296389c009b7
+      name: Templates/Modules
+  templates:
+    - uuid: 0dacd8666ec84f20904768d3007d3630
+      template: 'LibreHardwareMonitor WMI'
+      name: 'LibreHardwareMonitor WMI'
+      description: |
+        Template tooling version used: 0.39
+        
+        This template should discover temperatures and fan speeds.
+      groups:
+        - name: Templates/Modules
+      items:
+        - uuid: 9928c221f0f742f3b0e08d9bf3d34d7b
+          name: 'LibreHardwareMonitor temperatures'
+          key: 'wmi.getall[root/LibreHardwareMonitor,"SELECT Name, Value, Parent FROM Sensor WHERE SensorType = ''Temperature''"]'
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          timeout: 10s
+      discovery_rules:
+        - uuid: 4da23d44720e45f8bc4738fb609b3edc
+          name: 'Discovered temperatures'
+          type: DEPENDENT
+          key: lhm.temperature
+          delay: '0'
+          enabled_lifetime_type: DISABLE_AFTER
+          enabled_lifetime: 1h
+          item_prototypes:
+            - uuid: 979410b6436b45c092860b54f06c2861
+              name: '{#SENSOR.PARENT} temperature ({#SENSOR.NAME}) v5'
+              key: 'wmi.get[root/LibreHardwareMonitor,"SELECT Value FROM Sensor WHERE SensorType = ''Temperature'' AND Parent = ''{#SENSOR.PARENT}'' AND Name = ''{#SENSOR.NAME}''"]'
+              delay: 5s
+              units: °C
+          master_item:
+            key: 'wmi.getall[root/LibreHardwareMonitor,"SELECT Name, Value, Parent FROM Sensor WHERE SensorType = ''Temperature''"]'
+          lld_macro_paths:
+            - lld_macro: '{#SENSOR.NAME}'
+              path: $.Name
+            - lld_macro: '{#SENSOR.PARENT}'
+              path: $.Parent
