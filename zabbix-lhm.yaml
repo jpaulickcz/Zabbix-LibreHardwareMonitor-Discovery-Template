@@ -31,7 +31,7 @@ zabbix_export:
           enabled_lifetime: 1h
           item_prototypes:
             - uuid: 979410b6436b45c092860b54f06c2861
-              name: '{#SENSOR.PARENT} temperature ({#SENSOR.NAME}) v5'
+              name: '{#SENSOR.PARENT} temperature ({#SENSOR.NAME})'
               key: 'wmi.get[root/LibreHardwareMonitor,"SELECT Value FROM Sensor WHERE SensorType = ''Temperature'' AND Parent = ''{#SENSOR.PARENT}'' AND Name = ''{#SENSOR.NAME}''"]'
               delay: 5s
               units: °C
